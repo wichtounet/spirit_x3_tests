@@ -23,22 +23,7 @@ BOOST_FUSION_ADAPT_STRUCT(
     (std::string, name)
 )
 
-namespace x3_grammar {
-
-    typedef x3::identity<struct function_declaration> function_declaration_id;
-    x3::rule<function_declaration_id, x3_ast::function_declaration> const function_declaration("function_declaration");
-
-    auto const function_declaration_def = 
-            +x3::alpha 
-        >>  +x3::alpha;
-
-    auto const parser = x3::grammar("eddi", function_declaration = function_declaration_def);
-
-} // end of grammar namespace
-
 int main(int argc, char** argv){
-    auto& parser = x3_grammar::parser;
-
     x3_ast::function_declaration result;
     boost::spirit::x3::ascii::space_type space;
 
@@ -46,7 +31,7 @@ int main(int argc, char** argv){
     auto it = file_contents.begin();
     auto end = file_contents.end();
 
-    bool r = x3::phrase_parse(it, end, parser, space, result);
+    bool r = x3::phrase_parse(it, end, +x3::alpha >> +x3::alpha, space, result);
 
     if(r && it == end){
         std::cout << "parse success" << std::endl;
