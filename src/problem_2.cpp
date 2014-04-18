@@ -40,7 +40,7 @@ int main(int argc, char** argv){
     auto& parser = x3_grammar::parser;
 
     x3_ast::function_declaration result;
-    boost::spirit::x3::space_type space;
+    boost::spirit::x3::ascii::space_type space;
 
     std::string file_contents("first second");
     auto it = file_contents.begin();
