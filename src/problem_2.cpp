@@ -8,23 +8,19 @@
 
 namespace x3 = boost::spirit::x3;
 
-namespace x3_ast {
-
 struct function_declaration {
     std::string return_type;
     std::string name;
 };
 
-} //end of x3_ast namespace
-
 BOOST_FUSION_ADAPT_STRUCT(
-    x3_ast::function_declaration,
+    ::function_declaration,
     (std::string, return_type)
     (std::string, name)
 )
 
 int main(int argc, char** argv){
-    x3_ast::function_declaration result;
+    ::function_declaration result;
     boost::spirit::x3::ascii::space_type space;
 
     std::string file_contents("first second");
