@@ -14,6 +14,11 @@ problem_1: src/problem_1.cpp
 	$(CC) $(CXX_FLAGS) -o problem_1.o -c src/problem_1.cpp
 	$(LD) $(LD_FLAGS) -o problem_1 problem_1.o
 
+problem_2: src/problem_2.cpp
+	$(CC) $(CXX_FLAGS) -o problem_2.o -c src/problem_2.cpp
+	$(LD) $(LD_FLAGS) -o problem_2 problem_2.o
+
 clean:
 	rm -rf *.o
 	rm -rf problem_1
+	rm -rf problem_2
