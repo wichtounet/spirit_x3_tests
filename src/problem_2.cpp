@@ -24,6 +24,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 namespace x3_grammar {
+
     typedef x3::identity<struct function_declaration> function_declaration_id;
     x3::rule<function_declaration_id, x3_ast::function_declaration> const function_declaration("function_declaration");
 
@@ -31,40 +32,26 @@ namespace x3_grammar {
             +x3::alpha 
         >>  +x3::alpha;
 
-    auto const parser = x3::grammar(
-        "eddi", 
-        function_declaration = function_declaration_def
-        );
+    auto const parser = x3::grammar("eddi", function_declaration = function_declaration_def);
 
 } // end of grammar namespace
 
 int main(int argc, char** argv){
-    std::string file_contents("function b");
-
     auto& parser = x3_grammar::parser;
 
     x3_ast::function_declaration result;
     boost::spirit::x3::space_type space;
 
-    typedef std::string::iterator base_iterator_type;
-    typedef boost::spirit::classic::position_iterator2<base_iterator_type> pos_iterator_type;
-
-    pos_iterator_type it(file_contents.begin(), file_contents.end(), "test");
-    pos_iterator_type end;
+    std::string file_contents("first second");
+    auto it = file_contents.begin();
+    auto end = file_contents.end();
 
     bool r = x3::phrase_parse(it, end, parser, space, result);
 
     if(r && it == end){
-        return true;
+        std::cout << "parse success" << std::endl;
     } else {
-        auto& pos = it.get_position();
-        std::cout <<
-            "parse error at file " << pos.file <<
-            " line " << pos.line << " column " << pos.column << std::endl <<
-            "'" << it.get_currentline() << "'" << std::endl <<
-            std::setw(pos.column) << " " << "^- here" << std::endl;
-
-        return false;
+        std::cout << "parse fail" << std::endl;
     }
 
     return 0;
