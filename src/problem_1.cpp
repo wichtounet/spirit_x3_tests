@@ -47,7 +47,6 @@ BOOST_FUSION_ADAPT_STRUCT(
 
 BOOST_FUSION_ADAPT_STRUCT(
     x3_ast::import,
-    //(int, fake_)
     (std::string, file)
 )
 
@@ -65,8 +64,7 @@ namespace x3_grammar {
     x3::rule<import_id, x3_ast::import> const import("import");
 
     auto const import_def = 
-     //       x3::attr(1) >>
-        x3::lit("import")
+            x3::lit("import")
         >>  '"' 
         >   *x3::alpha
         >   '"';
