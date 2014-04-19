@@ -37,7 +37,7 @@ namespace x3_grammar {
 
     auto const declaration_def = 
             x3::char_('<')
-        >>  identifier % ','
+        >>  *identifier
         ;
 
     auto const parser = x3::grammar(
