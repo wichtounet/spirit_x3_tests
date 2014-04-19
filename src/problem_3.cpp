@@ -30,10 +30,7 @@ namespace x3_grammar {
     x3::rule<identifier_id, std::string> const identifier("identifier");
     x3::rule<declaration_id, x3_ast::declaration> const declaration("declaration");
 
-    auto const identifier_def = 
-                x3::lexeme[(x3::char_('_') >> *(x3::alnum | x3::char_('_')))]
-            |   x3::lexeme[(x3::alpha >> *(x3::alnum | x3::char_('_')))]
-            ;
+    auto const identifier_def = x3::lexeme[+x3::alnum];
     
     auto const declaration_def = 
             x3::lit('<')
