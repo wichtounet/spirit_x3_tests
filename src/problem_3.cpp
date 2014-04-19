@@ -42,8 +42,8 @@ namespace x3_grammar {
 
     auto const parser = x3::grammar(
         "eddi", 
-        identifier = identifier_def,
-        declaration = declaration_def
+        declaration = declaration_def,
+        identifier = identifier_def
         );
 
 } // end of grammar namespace
