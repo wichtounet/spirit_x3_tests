@@ -27,7 +27,7 @@ int main(int argc, char** argv){
     auto it = file_contents.begin();
     auto end = file_contents.end();
 
-    bool r = x3::phrase_parse(it, end, +x3::alpha >> +x3::alpha, space, result);
+    bool r = x3::phrase_parse(it, end, x3::lexeme[+x3::alpha] >> x3::lexeme[+x3::alpha], space, result);
 
     if(r && it == end){
         std::cout << "parse success" << std::endl;

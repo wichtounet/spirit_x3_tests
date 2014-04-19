@@ -7,7 +7,7 @@ LD=clang++
 
 BOOST_PREFIX=$(HOME)/build/modular-boost/
 
-CXX_FLAGS=-Iinclude -std=c++11 -stdlib=libc++ $(WARNING_FLAGS) -isystem $(BOOST_PREFIX)/include -g
+CXX_FLAGS=-Iinclude -std=c++11 -stdlib=libc++ $(WARNING_FLAGS) -isystem $(BOOST_PREFIX)/include
 LD_FLAGS=$(CXX_FLAGS)
 
 problem_1: src/problem_1.cpp
@@ -17,6 +17,10 @@ problem_1: src/problem_1.cpp
 problem_2: src/problem_2.cpp
 	$(CC) $(CXX_FLAGS) -o problem_2.o -c src/problem_2.cpp
 	$(LD) $(LD_FLAGS) -o problem_2 problem_2.o
+
+problem_3: src/problem_3.cpp
+	$(CC) $(CXX_FLAGS) -o problem_3.o -c src/problem_3.cpp
+	$(LD) $(LD_FLAGS) -o problem_3 problem_3.o
 
 clean:
 	rm -rf *.o
