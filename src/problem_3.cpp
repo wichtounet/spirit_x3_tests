@@ -11,7 +11,6 @@ namespace x3 = boost::spirit::x3;
 namespace x3_ast {
 
 struct declaration {
-    std::string name;
     char test;
     std::vector<std::string> template_types;
 };
@@ -20,7 +19,6 @@ struct declaration {
 
 BOOST_FUSION_ADAPT_STRUCT(
     x3_ast::declaration,
-    (std::string, name)
     (char, test)
     (std::vector<std::string>, template_types)
 )
@@ -38,9 +36,9 @@ namespace x3_grammar {
             ;
 
     auto const declaration_def = 
-            identifier 
-        >>  x3::char_('<')
-        >>  identifier % ',';
+            x3::char_('<')
+        >>  identifier % ','
+        ;
 
     auto const parser = x3::grammar(
         "eddi", 
