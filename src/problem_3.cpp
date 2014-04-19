@@ -11,16 +11,16 @@ namespace x3 = boost::spirit::x3;
 namespace x3_ast {
 
 struct declaration {
-    char test;
     std::vector<std::string> template_types;
+    std::string name;
 };
 
 } //end of x3_ast namespace
 
 BOOST_FUSION_ADAPT_STRUCT(
     x3_ast::declaration,
-    (char, test)
     (std::vector<std::string>, template_types)
+    (std::string, name)
 )
 
 namespace x3_grammar {
@@ -34,33 +34,36 @@ namespace x3_grammar {
                 x3::lexeme[(x3::char_('_') >> *(x3::alnum | x3::char_('_')))]
             |   x3::lexeme[(x3::alpha >> *(x3::alnum | x3::char_('_')))]
             ;
-
+    
     auto const declaration_def = 
-            x3::char_('<')
+            x3::lit('<')
         >>  *identifier
+        >>  '>'
+        >>  identifier
         ;
 
     auto const parser = x3::grammar(
         "eddi", 
-        declaration = declaration_def,
+        declaration = declaration_def, 
         identifier = identifier_def
         );
 
 } // end of grammar namespace
 
 int main(){
+    std::string file_contents("adsf");
     x3_ast::declaration result;
-    x3::space_type skip;
+    boost::spirit::x3::ascii::space_type space;
 
-    std::string file_contents("asdf");
     auto it = file_contents.begin();
     auto end = file_contents.end();
 
-    bool r = x3::phrase_parse(it, end, x3_grammar::parser, skip, result);
+    bool r = x3::phrase_parse(it, end, x3_grammar::parser, space, result);
 
     if(r && it == end){
         return true;
     } else {
+
         return false;
     }
 }
