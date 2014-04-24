@@ -29,6 +29,8 @@ BOOST_FUSION_ADAPT_STRUCT(
 
 namespace x3_grammar {
 
+    auto const skipper = x3::ascii::space;
+
     typedef x3::identity<struct simple_type> simple_type_id;
     x3::rule<simple_type_id, x3_ast::simple_type> const simple_type("simple_type");
 
@@ -38,7 +40,7 @@ namespace x3_grammar {
     using parser_type = x3::any_parser<
         std::string::iterator, 
         x3_ast::simple_type, 
-        decltype(x3::make_context<x3::skipper_tag>(x3::ascii::space))
+        decltype(x3::make_context<x3::skipper_tag>(skipper))
     >;
    
     parser_type type_grammar_create(){
@@ -62,7 +64,7 @@ int main(int argc, char** argv){
 
     x3::ascii::space_type space;
     x3_ast::template_function_declaration result;
-    x3::phrase_parse(file_contents.begin(), file_contents.end(), x3_grammar::parser, space, result);
+    x3::phrase_parse(file_contents.begin(), file_contents.end(), x3_grammar::parser, x3_grammar::skipper, result);
 
     return 0;
 }
