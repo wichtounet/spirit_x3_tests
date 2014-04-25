@@ -38,22 +38,23 @@ namespace x3_grammar {
     x3::rule<template_function_declaration_id, x3_ast::template_function_declaration> const template_function_declaration("template_function_declaration");
 
     using parser_type = x3::any_parser<
-        std::string::iterator, 
-        x3_ast::simple_type, 
-        decltype(x3::make_context<x3::skipper_tag>(skipper))
+        std::string::iterator,
+        x3_ast::simple_type
     >;
-   
+
     parser_type type_grammar_create(){
-        return x3::grammar(
-            "eddi::type",
-            simple_type = x3::attr(true)
-            );
+        return x3::skip(skipper)[
+                x3::grammar(
+                    "eddi::type",
+                    simple_type = x3::attr(true)
+                    )
+            ];
     }
 
     auto const type_grammar = type_grammar_create();
-    
+
     auto const parser = x3::grammar(
-        "eddi", 
+        "eddi",
         template_function_declaration = type_grammar
         );
 
