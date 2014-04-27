@@ -35,20 +35,10 @@ namespace x3_grammar {
 
     auto const value_def = x3::char_ | x3::float_;
 
-    using value_parser_type = x3::any_parser<std::string::iterator, x3_ast::value>;
-
-    value_parser_type value_grammar_create(){
-        return x3::skip(skipper)[x3::grammar(
-            "eddi::value",
-            value = value_def
-            )];
-    }
-
-    auto const value_grammar = value_grammar_create();
-
 	auto const parser = x3::grammar("eddi", 
-			instruction = (return_ >> ';') | (x3::alnum >> ';'),
-            return_ = x3::lit("return") >>  value_grammar);
+			instruction = (return_ >> ';') | x3::alnum,
+			value = value_def,
+            return_ = x3::lit("return") >>  value);
 
 } // end of grammar namespace
 
