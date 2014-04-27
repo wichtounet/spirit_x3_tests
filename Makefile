@@ -30,6 +30,10 @@ problem_5: src/problem_5.cpp
 	$(CC) $(CXX_FLAGS) -o problem_5.o -c src/problem_5.cpp
 	$(LD) $(LD_FLAGS) -o problem_5 problem_5.o
 
+problem_6: src/problem_6.cpp
+	$(CC) $(CXX_FLAGS) -o problem_6.o -c src/problem_6.cpp
+	$(LD) $(LD_FLAGS) -o problem_6 problem_6.o
+
 clean:
 	rm -rf *.o
 	rm -rf problem_1
