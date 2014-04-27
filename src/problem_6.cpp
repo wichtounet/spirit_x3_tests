@@ -2,12 +2,8 @@
 
 #include <boost/spirit/home/x3.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
-#include <boost/spirit/include/classic_position_iterator.hpp>
 
 namespace x3 = boost::spirit::x3;
-
-typedef std::string::iterator base_iterator_type;
-typedef boost::spirit::classic::position_iterator2<base_iterator_type> pos_iterator_type;
 
 namespace x3_ast {
 
@@ -74,7 +70,7 @@ namespace x3_grammar {
 
     auto const value_def = variable_value | string_literal;
 
-    using value_parser_type = x3::any_parser<pos_iterator_type, x3_ast::value>;
+    using value_parser_type = x3::any_parser<std::string::iterator, x3_ast::value>;
 
     value_parser_type value_grammar_create(){
         return x3::skip(skipper)[x3::grammar(
@@ -93,7 +89,7 @@ namespace x3_grammar {
 
 	auto const parser = x3::grammar("eddi", 
 			instruction = instruction_def,
-            variable_declaration = identifier,
+            variable_declaration = +x3::char_,
             return_ = x3::lit("return") >>  value_grammar);
 
 } // end of grammar namespace
@@ -104,9 +100,6 @@ bool parse(){
     auto& parser = x3_grammar::parser;
     auto& skipper = x3_grammar::skipper;
 
-    pos_iterator_type it(file_contents.begin(), file_contents.end(), "asdf");
-    pos_iterator_type end;
-
     x3_ast::instruction result;
-	return x3::phrase_parse(it, end, parser, skipper, result);
+	return x3::phrase_parse(file_contents.begin(), file_contents.end(), parser, skipper, result);
 }
