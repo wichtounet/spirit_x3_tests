@@ -1,8 +1,3 @@
-#include <iomanip>
-#include <istream>
-#include <sstream>
-#include <iostream>
-#include <fstream>
 #include <string>
 
 #define BOOST_SPIRIT_X3_NO_RTTI
@@ -15,14 +10,6 @@ namespace x3 = boost::spirit::x3;
 typedef std::string::iterator pos_iterator_type;
 
 namespace x3_ast {
-
-struct position {
-    std::string file;               /*!< The source file */
-    std::size_t line = 0;               /*!< The source line number */
-    std::size_t column = 0;             /*!< The source column number */
-};
-
-//*****************************************
 
 struct simple_type;
 struct array_type;
@@ -54,8 +41,6 @@ struct template_type {
     std::vector<type> template_types;
 };
 
-//*****************************************
-
 struct integer_literal {
     int value;
 };
@@ -78,7 +63,6 @@ struct char_literal {
 };
 
 struct variable_value {
-    position pos;
     std::string variable_name;
 };
 
@@ -90,8 +74,6 @@ typedef x3::variant<
             char_literal,
             variable_value
         > value;
-
-//*****************************************
 
 struct foreach;
 struct while_;
@@ -118,19 +100,16 @@ typedef x3::variant<
     > instruction;
 
 struct while_ {
-    position pos;
     value condition;
     std::vector<instruction> instructions;
 };
 
 struct do_while {
-    position pos;
     value condition;
     std::vector<instruction> instructions;
 };
 
 struct foreach_in {
-    position pos;
     type variable_type;
     std::string variable_name;
     std::string array_name;
@@ -138,7 +117,6 @@ struct foreach_in {
 };
 
 struct foreach {
-    position pos;
     type variable_type;
     std::string variable_name;
     int from;
@@ -147,34 +125,29 @@ struct foreach {
 };
 
 struct variable_declaration {
-    position pos;
     type variable_type;
     std::string variable_name;
     boost::optional<x3_ast::value> value;
 };
 
 struct struct_declaration {
-    position pos;
     type variable_type;
     std::string variable_name;
     std::vector<value> values;
 };
 
 struct array_declaration {
-    position pos;
     type array_type;
     std::string array_name;
     value size;
 };
 
 struct return_ {
-    position pos;
     int fake_;
     value return_value;
 };
 
 struct delete_ {
-    position pos;
     int fake_;
     value value;
 };
@@ -196,15 +169,12 @@ struct if_ {
     boost::optional<x3_ast::else_> else_;
 };
 
-//*****************************************
-
 struct function_parameter {
     type  parameter_type;
     std::string parameter_name;
 };
 
 struct template_function_declaration {
-    position pos;
     std::vector<std::string> template_types;
     type return_type;
     std::string name;
@@ -213,31 +183,26 @@ struct template_function_declaration {
 };
 
 struct global_variable_declaration {
-    position pos;
     type variable_type;
     std::string variable_name;
     boost::optional<x3_ast::value> value;
 };
 
 struct global_array_declaration {
-    position pos;
     type array_type;
     std::string array_name;
     value size;
 };
 
 struct standard_import {
-    position pos;
     std::string file;
 };
 
 struct import {
-    position pos;
     std::string file;
 };
 
 struct member_declaration {
-    position pos;
     type type;
     std::string name;
 };
@@ -250,7 +215,6 @@ typedef x3::variant<
 
 struct template_struct {
     std::vector<std::string> template_types;
-    position pos;
     std::string name;
     boost::optional<type> parent_type;
     std::vector<struct_block> blocks;
@@ -269,314 +233,12 @@ struct source_file {
     std::vector<block> blocks;
 };
 
-struct printer: public boost::static_visitor<>  {
-    std::size_t i = 0;
-
-    std::string indent(){
-        std::string v(i, ' ');
-        return v;
-    }
-
-    void operator()(const source_file& source_file){
-        std::cout << indent() << "source_file" << std::endl;
-
-        i += 2;
-        for(auto& block : source_file.blocks){
-            boost::apply_visitor(*this, block);
-        }
-        i -= 2;
-    }
-
-    void operator()(const standard_import& import){
-        std::cout << indent() << "standard_import: " << import.file << std::endl;
-    }
-    
-    void operator()(const import& import){
-        std::cout << indent() << "import: " << import.file << std::endl;
-    }
-    
-    void operator()(const template_struct&){
-        //TODO
-    }
-    
-    void operator()(const template_function_declaration& function){
-        std::cout << indent() << "template_function_declaration: " << function.name << std::endl;
-        i += 2;
-        std::cout << indent() << "template_types: ";
-        for(auto& v : function.template_types) std::cout << v << ", ";
-        std::cout << std::endl << indent() << "return_type: " << std::endl;
-        i += 2;
-        boost::apply_visitor(*this, function.return_type);
-        i -= 2;
-        std::cout << indent() << "parameters: " << std::endl;
-        i += 2;
-        for(auto& parameter : function.parameters){
-            std::cout << indent() << "name: " << parameter.parameter_name << std::endl;
-            std::cout << indent() << "type: " << std::endl;
-            i += 2;
-            boost::apply_visitor(*this, parameter.parameter_type);
-            i -= 2;
-        }
-        i -= 2;
-        std::cout << indent() << "instructions: " << std::endl;
-        i += 2;
-        for(auto& instruction : function.instructions){
-            boost::apply_visitor(*this, instruction);
-        }
-        i -= 2;
-        i -= 2;
-    }
-
-    void operator()(const foreach& foreach){
-        std::cout << indent() << "foreach: " << std::endl;
-        i += 2;
-        std::cout << indent() << "variable_type: " << std::endl;
-        i += 2;
-        boost::apply_visitor(*this, foreach.variable_type);
-        i -= 2;
-        std::cout << indent() << "variable_name: " << foreach.variable_name << std::endl;
-        std::cout << indent() << "from: " << foreach.from << std::endl;
-        std::cout << indent() << "to: " << foreach.to << std::endl;
-        std::cout << indent() << "instructions: " << std::endl;
-        i += 2;
-        for(auto& instruction : foreach.instructions){
-            boost::apply_visitor(*this, instruction);
-        }
-        i -= 2;
-        i -= 2;
-    }
-    
-    void operator()(const foreach_in& foreach){
-        std::cout << indent() << "foreach_in: " << std::endl;
-        i += 2;
-        std::cout << indent() << "variable_type: " << std::endl;
-        i += 2;
-        boost::apply_visitor(*this, foreach.variable_type);
-        i -= 2;
-        std::cout << indent() << "variable_name: " << foreach.variable_name << std::endl;
-        std::cout << indent() << "array_name: " << foreach.array_name << std::endl;
-        std::cout << indent() << "instructions: " << std::endl;
-        i += 2;
-        for(auto& instruction : foreach.instructions){
-            boost::apply_visitor(*this, instruction);
-        }
-        i -= 2;
-        i -= 2;
-    }
-
-    void operator()(const while_& loop){
-        std::cout << indent() << "while: " << std::endl;
-        i += 2;
-        std::cout << indent() << "condition: " << std::endl;
-        i += 2;
-        boost::apply_visitor(*this, loop.condition);
-        i -= 2;
-        std::cout << indent() << "instructions: " << std::endl;
-        i += 2;
-        for(auto& instruction : loop.instructions){
-            boost::apply_visitor(*this, instruction);
-        }
-        i -= 2;
-        i -= 2;
-    }
-
-    void operator()(const do_while& loop){
-        std::cout << indent() << "do while: " << std::endl;
-        i += 2;
-        std::cout << indent() << "condition: " << std::endl;
-        i += 2;
-        boost::apply_visitor(*this, loop.condition);
-        i -= 2;
-        std::cout << indent() << "instructions: " << std::endl;
-        i += 2;
-        for(auto& instruction : loop.instructions){
-            boost::apply_visitor(*this, instruction);
-        }
-        i -= 2;
-        i -= 2;
-    }
-
-    void operator()(const if_& if_){
-        std::cout << indent() << "if: " << std::endl;
-        i += 2;
-        std::cout << indent() << "condition: " << std::endl;
-        i += 2;
-        boost::apply_visitor(*this, if_.condition);
-        i -= 2;
-        std::cout << indent() << "instructions: " << std::endl;
-        i += 2;
-        for(auto& instruction : if_.instructions){
-            boost::apply_visitor(*this, instruction);
-        }
-        i -= 2;
-        i -= 2;
-    }
-    
-    void operator()(const return_& return_){
-        std::cout << indent() << "return: " << std::endl;
-        i += 2;
-        std::cout << indent() << "value: " << std::endl;
-        i += 2;
-        boost::apply_visitor(*this, return_.return_value);
-        i -= 2;
-        i -= 2;
-    }
-    
-    void operator()(const delete_& delete_){
-        std::cout << indent() << "delete: " << std::endl;
-        i += 2;
-        std::cout << indent() << "value: " << std::endl;
-        i += 2;
-        boost::apply_visitor(*this, delete_.value);
-        i -= 2;
-        i -= 2;
-    }
-    
-    void operator()(const variable_declaration& declaration){
-        std::cout << indent() << "variable_declaration: " << std::endl;
-        i += 2;
-        std::cout << indent() << "variable_type: " << std::endl;
-        i += 2;
-        boost::apply_visitor(*this, declaration.variable_type);
-        i -= 2;
-        std::cout << indent() << "variable_name: " << declaration.variable_name << std::endl;
-        if(declaration.value){
-            std::cout << indent() << "value: " << std::endl;
-            i += 2;
-            boost::apply_visitor(*this, *declaration.value);
-            i -= 2;
-        }
-        i -= 2;
-    }
-    
-    void operator()(const struct_declaration& declaration){
-        std::cout << indent() << "struct_declaration: " << std::endl;
-        i += 2;
-        std::cout << indent() << "variable_type: " << std::endl;
-        i += 2;
-        boost::apply_visitor(*this, declaration.variable_type);
-        i -= 2;
-        std::cout << indent() << "variable_name: " << declaration.variable_name << std::endl;
-        std::cout << indent() << "values: " << std::endl;
-        i += 2;
-        for(auto& v : declaration.values){
-            boost::apply_visitor(*this, v);
-        }
-        i -= 2;
-        i -= 2;
-    }
-    
-    void operator()(const global_variable_declaration& declaration){
-        std::cout << indent() << "global_variable_declaration: " << std::endl;
-        i += 2;
-        std::cout << indent() << "variable_type: " << std::endl;
-        i += 2;
-        boost::apply_visitor(*this, declaration.variable_type);
-        i -= 2;
-        std::cout << indent() << "variable_name: " << declaration.variable_name << std::endl;
-        if(declaration.value){
-            std::cout << indent() << "value: " << std::endl;
-            i += 2;
-            boost::apply_visitor(*this, *declaration.value);
-            i -= 2;
-        }
-        i -= 2;
-    }
-    
-    void operator()(const global_array_declaration& declaration){
-        std::cout << indent() << "global_array_declaration: " << std::endl;
-        i += 2;
-        std::cout << indent() << "array_type: " << std::endl;
-        i += 2;
-        boost::apply_visitor(*this, declaration.array_type);
-        i -= 2;
-        std::cout << indent() << "array_name: " << declaration.array_name << std::endl;
-        std::cout << indent() << "size: " << std::endl;
-        i += 2;
-        boost::apply_visitor(*this, declaration.size);
-        i -= 2;
-        i -= 2;
-    }
-    
-    void operator()(const array_declaration& declaration){
-        std::cout << indent() << "array_declaration: " << std::endl;
-        i += 2;
-        std::cout << indent() << "array_type: " << std::endl;
-        i += 2;
-        boost::apply_visitor(*this, declaration.array_type);
-        i -= 2;
-        std::cout << indent() << "array_name: " << declaration.array_name << std::endl;
-        std::cout << indent() << "size: " << std::endl;
-        i += 2;
-        boost::apply_visitor(*this, declaration.size);
-        i -= 2;
-        i -= 2;
-    }
-
-    void operator()(const simple_type& type){
-        std::cout << indent() << "simple_type: " << type.base_type << std::endl;
-    }
-    
-    void operator()(const array_type& type){
-        std::cout << indent() << "array_type: " << std::endl;
-        i += 2;
-        boost::apply_visitor(*this, type.base_type);
-        i -= 2;
-    }
-    
-    void operator()(const template_type& type){
-        std::cout << indent() << "template_type: " << std::endl;
-        i += 2;
-        std::cout << indent() << "base_type: " << type.base_type << std::endl;
-        std::cout << indent() << "template_types: " << std::endl;
-        i += 2;
-        for(auto& t : type.template_types){
-            boost::apply_visitor(*this, t);
-        }
-        i -= 2;
-        i -= 2;
-    }
-    
-    void operator()(const pointer_type& type){
-        std::cout << indent() << "pointer_type: " << std::endl;
-        i += 2;
-        boost::apply_visitor(*this, type.base_type);
-        i -= 2;
-    }
-
-    void operator()(const integer_literal& integer){
-        std::cout << indent() << "integer_literal: " << integer.value << std::endl;
-    }
-    
-    void operator()(const integer_suffix_literal& integer){
-        std::cout << indent() << "integer_suffix_literal: " << integer.value << integer.suffix << std::endl;
-    }
-
-    void operator()(const float_literal& integer){
-        std::cout << indent() << "float_literal: " << integer.value << std::endl;
-    }
-    
-    void operator()(const string_literal& integer){
-        std::cout << indent() << "string_literal: " << integer.value << std::endl;
-    }
-    
-    void operator()(const char_literal& integer){
-        std::cout << indent() << "char_literal: " << integer.value << std::endl;
-    }
-    
-    void operator()(const variable_value& integer){
-        std::cout << indent() << "variable_value: " << integer.variable_name << std::endl;
-    }
-};
-
 } //end of x3_ast namespace
 
 BOOST_FUSION_ADAPT_STRUCT(
     x3_ast::source_file,
     (std::vector<x3_ast::block>, blocks)
 )
-
-//***************
 
 BOOST_FUSION_ADAPT_STRUCT(
     x3_ast::simple_type, 
@@ -599,8 +261,6 @@ BOOST_FUSION_ADAPT_STRUCT(
     (std::string, base_type)
     (std::vector<x3_ast::type>, template_types)
 )
-
-//***************
 
 BOOST_FUSION_ADAPT_STRUCT(
     x3_ast::integer_literal, 
@@ -632,8 +292,6 @@ BOOST_FUSION_ADAPT_STRUCT(
     x3_ast::variable_value, 
     (std::string, variable_name)
 )
-
-//***************
 
 BOOST_FUSION_ADAPT_STRUCT(
     x3_ast::foreach_in, 
@@ -716,8 +374,6 @@ BOOST_FUSION_ADAPT_STRUCT(
     (std::vector<x3_ast::else_if>, else_ifs)
     (boost::optional<x3_ast::else_>, else_)
 )
-
-//***************
 
 BOOST_FUSION_ADAPT_STRUCT(
     x3_ast::template_function_declaration,
@@ -854,8 +510,6 @@ namespace x3_grammar {
     x3::rule<member_declaration_id, x3_ast::member_declaration> const member_declaration("member_declaration");
     x3::rule<template_struct_id, x3_ast::template_struct> const template_struct("template_struct");
 
-    /* Utilities */
-
     auto const skipper = 
             x3::ascii::space
         |   ("/*" >> *(x3::char_ - "*/") >> "*/")
@@ -871,8 +525,6 @@ namespace x3_grammar {
                 x3::lexeme[(x3::char_('_') >> *(x3::alnum | x3::char_('_')))]
             |   x3::lexeme[(x3::alpha >> *(x3::alnum | x3::char_('_')))]
             ;
-
-    /* Types */ 
 
     auto const type_def =
             array_type
@@ -916,8 +568,6 @@ namespace x3_grammar {
             array_type = array_type_def,
             pointer_type = pointer_type_def
         )];
-    
-    /* Values */ 
 
     auto const integer_literal_def =
         x3::int_;
@@ -965,8 +615,6 @@ namespace x3_grammar {
             string_literal = string_literal_def,
             variable_value = variable_value_def
         )];
-    
-    /* Instructions */
 
     auto const instruction_def =
             if_
@@ -1102,8 +750,6 @@ namespace x3_grammar {
             else_if = else_if_def,
             else_ = else_def
         )];
-
-    /* Base */ 
     
     auto const source_file_def = 
          *(
@@ -1184,8 +830,6 @@ namespace x3_grammar {
                 |   template_function_declaration
              )
         >>  '}';
-
-    /* Grammar */
     
     auto const parser = x3::grammar(
         "eddi", 
