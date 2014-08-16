@@ -42,21 +42,23 @@ namespace x3_grammar {
         x3_ast::simple_type
     >;
 
+    BOOST_SPIRIT_DEFINE(
+        simple_type = x3::attr(true)
+    );
+
+    auto simple_type_grammar = simple_type;
+
     parser_type type_grammar_create(){
-        return x3::skip(skipper)[
-                x3::grammar(
-                    "eddi::type",
-                    simple_type = x3::attr(true)
-                    )
-            ];
+        return x3::skip(skipper)[simple_type_grammar];
     }
 
     auto const type_grammar = type_grammar_create();
 
-    auto const parser = x3::grammar(
-        "eddi",
+    BOOST_SPIRIT_DEFINE(
         template_function_declaration = type_grammar
-        );
+    );
+
+    auto parser = template_function_declaration;
 
 } // end of grammar namespace
 

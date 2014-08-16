@@ -3,6 +3,7 @@
 #define BOOST_SPIRIT_X3_NO_RTTI
 
 #include <boost/spirit/home/x3.hpp>
+#include <boost/spirit/home/x3/support/ast/variant.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
 
 namespace x3 = boost::spirit::x3;
@@ -557,17 +558,19 @@ namespace x3_grammar {
             )
         >>  '*';
 
+    BOOST_SPIRIT_DEFINE(
+        type = type_def,
+        simple_type = simple_type_def,
+        template_type = template_type_def,
+        array_type = array_type_def,
+        pointer_type = pointer_type_def
+    );
+
+    const auto type_g = type;
+
     using type_parser_type = x3::any_parser<pos_iterator_type, x3_ast::type>;
 
-    type_parser_type const type_grammar = 
-        x3::skip(skipper)[x3::grammar(
-            "eddi::type",
-            type = type_def,
-            simple_type = simple_type_def,
-            template_type = template_type_def,
-            array_type = array_type_def,
-            pointer_type = pointer_type_def
-        )];
+    const type_parser_type type_grammar = x3::skip(skipper)[type_g];
 
     auto const integer_literal_def =
         x3::int_;
@@ -602,19 +605,21 @@ namespace x3_grammar {
         |   string_literal
         |   char_literal;
 
+    BOOST_SPIRIT_DEFINE(
+        value = value_def,
+        integer_literal = integer_literal_def,
+        integer_suffix_literal = integer_suffix_literal_def,
+        float_literal = float_literal_def,
+        char_literal = char_literal_def,
+        string_literal = string_literal_def,
+        variable_value = variable_value_def
+    );
+
+    auto value_g = value;
+
     using value_parser_type = x3::any_parser<pos_iterator_type, x3_ast::value>;
 
-    value_parser_type const value_grammar = 
-        x3::skip(skipper)[x3::grammar(
-            "eddi::value",
-            value = value_def,
-            integer_literal = integer_literal_def,
-            integer_suffix_literal = integer_suffix_literal_def,
-            float_literal = float_literal_def,
-            char_literal = char_literal_def,
-            string_literal = string_literal_def,
-            variable_value = variable_value_def
-        )];
+    const value_parser_type value_grammar = x3::skip(skipper)[value_g];
 
     auto const instruction_def =
             if_
@@ -730,27 +735,29 @@ namespace x3_grammar {
         >>  '{'
         >>  *instruction
         >>  '}';
-    
+
+    BOOST_SPIRIT_DEFINE(
+        instruction = instruction_def,
+        foreach = foreach_def,
+        foreach_in = foreach_in_def,
+        while_ = while_def,
+        do_while = do_while_def,
+        variable_declaration = variable_declaration_def,
+        struct_declaration = struct_declaration_def,
+        array_declaration = array_declaration_def,
+        return_ = return_def,
+        delete_ = delete_def,
+        if_ = if_def,
+        else_if = else_if_def,
+        else_ = else_def
+    );
+
+    auto instruction_g = instruction;
+
     using instruction_parser_type = x3::any_parser<pos_iterator_type, x3_ast::instruction>;
 
-    instruction_parser_type const instruction_grammar =
-        x3::skip(skipper)[x3::grammar(
-            "eddi::instruction",
-            instruction = instruction_def,
-            foreach = foreach_def,
-            foreach_in = foreach_in_def,
-            while_ = while_def,
-            do_while = do_while_def,
-            variable_declaration = variable_declaration_def,
-            struct_declaration = struct_declaration_def,
-            array_declaration = array_declaration_def,
-            return_ = return_def,
-            delete_ = delete_def,
-            if_ = if_def,
-            else_if = else_if_def,
-            else_ = else_def
-        )];
-    
+    const instruction_parser_type instruction_grammar = x3::skip(skipper)[instruction_g];
+
     auto const source_file_def = 
          *(
                 standard_import
@@ -830,9 +837,8 @@ namespace x3_grammar {
                 |   template_function_declaration
              )
         >>  '}';
-    
-    auto const parser = x3::grammar(
-        "eddi", 
+
+    BOOST_SPIRIT_DEFINE(
         source_file = source_file_def,
         function_parameter = function_parameter_def, 
         template_function_declaration = template_function_declaration_def, 
@@ -841,9 +847,11 @@ namespace x3_grammar {
         standard_import = standard_import_def,
         import = import_def,
         member_declaration = member_declaration_def,
-        array_declaration = array_declaration_def,
+//        array_declaration = array_declaration_def,
         template_struct = template_struct_def
-        );
+    );
+
+    auto const parser = source_file;
 
 } // end of grammar namespace
 

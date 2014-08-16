@@ -6,6 +6,7 @@
 #include <string>
 
 #include <boost/spirit/home/x3.hpp>
+#include <boost/spirit/home/x3/support/ast/variant.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
 #include <boost/spirit/include/classic_position_iterator.hpp>
 
@@ -79,11 +80,13 @@ namespace x3_grammar {
             |   function_declaration
          );
     
-    auto const parser = x3::grammar(
-        "eddi", 
+    BOOST_SPIRIT_DEFINE(
         source_file = source_file_def,
         function_declaration = function_declaration_def, 
-        import = import_def);
+        import = import_def
+    );
+
+    auto parser = source_file;
 
 } // end of grammar namespace
 

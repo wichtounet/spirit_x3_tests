@@ -1,6 +1,7 @@
 #include <string>
 
 #include <boost/spirit/home/x3.hpp>
+#include <boost/spirit/home/x3/support/ast/variant.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
 
 namespace x3 = boost::spirit::x3;
@@ -35,10 +36,13 @@ namespace x3_grammar {
 
     auto const value_def = x3::char_ | x3::float_;
 
-	auto const parser = x3::grammar("eddi", 
-			instruction = (return_ >> ';') | x3::alnum,
-			value = value_def,
-            return_ = x3::lit("return") >>  value);
+    BOOST_SPIRIT_DEFINE(
+        instruction = (return_ >> ';') | x3::alnum,
+        value = value_def,
+        return_ = x3::lit("return") >>  value
+    );
+
+    auto parser = instruction;
 
 } // end of grammar namespace
 

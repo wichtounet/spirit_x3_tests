@@ -2,6 +2,7 @@
 
 #include <boost/spirit/home/x3.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
+#include <boost/spirit/home/x3/support/ast/variant.hpp>
 #include <boost/spirit/include/classic_position_iterator.hpp>
 
 namespace x3 = boost::spirit::x3;
@@ -61,19 +62,18 @@ namespace x3_grammar {
     auto const simple_type_def = x3::attr(true);
     auto const pointer_type_def = simple_type >> '*';
 
-    using type_parser_type = x3::any_parser<pos_iterator_type, x3_ast::type>;
+    BOOST_SPIRIT_DEFINE(
+        type = type_def,
+        simple_type = simple_type_def,
+        pointer_type = pointer_type_def
+    );
 
-    type_parser_type type_grammar_create(){
-        return x3::skip(skipper)[x3::grammar(
-            "eddi::type",
-            type = type_def,
-            simple_type = simple_type_def,
-            pointer_type = pointer_type_def
-            )];
-    }
+    auto const type_grammar = x3::skip(skipper)[type];
 
-    auto const type_grammar = type_grammar_create();
-    auto const parser = x3::grammar("eddi", declaration = type_grammar >> x3::lexeme[*x3::alpha]);
+    BOOST_SPIRIT_DEFINE(declaration = type_grammar >> x3::lexeme[*x3::alpha]);
+
+    auto parser = declaration;
+
 } // end of grammar namespace
 
 int main(int argc, char** argv){

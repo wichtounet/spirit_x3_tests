@@ -39,11 +39,12 @@ namespace x3_grammar {
         >>  identifier
         ;
 
-    auto const parser = x3::grammar(
-        "eddi", 
+    BOOST_SPIRIT_DEFINE(
         declaration = declaration_def, 
         identifier = identifier_def
-        );
+    );
+
+    auto parser = declaration;
 
 } // end of grammar namespace
 
