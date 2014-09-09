@@ -34,6 +34,10 @@ problem_6: src/problem_6.cpp
 	$(CC) $(CXX_FLAGS) -o problem_6.o -c src/problem_6.cpp
 	$(LD) $(LD_FLAGS) -o problem_6 problem_6.o
 
+problem_7: src/problem_7.cpp
+	$(CC) $(CXX_FLAGS) -o problem_7.o -c src/problem_7.cpp
+	$(LD) $(LD_FLAGS) -o problem_7 problem_7.o
+
 monster: src/monster.cpp
 	$(CC) -fno-rtti -O2 -ftemplate-depth-2048 $(CXX_FLAGS) -o monster.o -c src/monster.cpp
 	$(LD) $(LD_FLAGS) -o monster monster.o
@@ -46,4 +50,5 @@ clean:
 	rm -rf problem_4
 	rm -rf problem_5
 	rm -rf problem_6
+	rm -rf problem_7
 	rm -rf monster
