@@ -29,6 +29,9 @@ namespace x3_grammar {
     auto const value_def = 
             primary_value
         |   '(' > primary_value > ')'
+        //SOLUTION | '(' > x3::int_ > ')'
+        //SOLUTION | '(' > x3::char_ > ')'
+        //SOLUTION | '(' > x3::double_ > ')'
         ;
 
     BOOST_SPIRIT_DEFINE(
