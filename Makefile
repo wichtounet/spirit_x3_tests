@@ -46,6 +46,10 @@ not_nice_1: src/not_nice_1.cpp
 	$(CC) $(CXX_FLAGS) -o not_nice_1.o -c src/not_nice_1.cpp
 	$(LD) $(LD_FLAGS) -o not_nice_1 not_nice_1.o
 
+not_nice_2: src/not_nice_2.cpp
+	$(CC) $(CXX_FLAGS) -o not_nice_2.o -c src/not_nice_2.cpp
+	$(LD) $(LD_FLAGS) -o not_nice_2 not_nice_2.o
+
 monster: src/monster.cpp
 	$(CC) -fno-rtti -O2 -ftemplate-depth-2048 $(CXX_FLAGS) -o monster.o -c src/monster.cpp
 	$(LD) $(LD_FLAGS) -o monster monster.o
