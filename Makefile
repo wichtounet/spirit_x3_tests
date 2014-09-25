@@ -50,6 +50,10 @@ not_nice_2: src/not_nice_2.cpp
 	$(CC) $(CXX_FLAGS) -o not_nice_2.o -c src/not_nice_2.cpp
 	$(LD) $(LD_FLAGS) -o not_nice_2 not_nice_2.o
 
+not_nice_3: src/not_nice_3.cpp
+	$(CC) $(CXX_FLAGS) -o not_nice_3.o -c src/not_nice_3.cpp
+	$(LD) $(LD_FLAGS) -o not_nice_3 not_nice_3.o
+
 monster: src/monster.cpp
 	$(CC) -fno-rtti -O2 -ftemplate-depth-2048 $(CXX_FLAGS) -o monster.o -c src/monster.cpp
 	$(LD) $(LD_FLAGS) -o monster monster.o
@@ -65,4 +69,6 @@ clean:
 	rm -rf problem_7
 	rm -rf problem_8
 	rm -rf not_nice_1
+	rm -rf not_nice_2
+	rm -rf not_nice_3
 	rm -rf monster
