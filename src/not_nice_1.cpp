@@ -45,16 +45,16 @@ namespace x3_grammar {
 
     auto const instruction_def = x3::int_ | x3::char_;
 
-    auto const else_def = *instruction 
+    auto const else__def = *instruction 
         //SOLUTION > x3::attr(21)
         ;
 
-    auto const if_def = -else_;
+    auto const if__def = -else_;
 
     BOOST_SPIRIT_DEFINE(
-        if_ = if_def,
-        else_ = else_def,
-        instruction = instruction_def
+        if_,
+        else_,
+        instruction
     );
 
     auto parser = if_;

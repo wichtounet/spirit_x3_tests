@@ -27,8 +27,8 @@ namespace x3_grammar {
     auto const instruction_def = x3::int_ | x3::char_ | null;
 
     BOOST_SPIRIT_DEFINE(
-        instruction = instruction_def,
-        null = null_def
+        instruction,
+        null
     );
 
     auto parser = instruction;

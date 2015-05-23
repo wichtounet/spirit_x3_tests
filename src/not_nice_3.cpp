@@ -35,8 +35,8 @@ namespace x3_grammar {
         ;
 
     BOOST_SPIRIT_DEFINE(
-        value = value_def,
-        primary_value = primary_value_def
+        value,
+        primary_value
     );
 
     auto parser = value;

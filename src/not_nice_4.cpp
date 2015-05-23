@@ -40,7 +40,7 @@ namespace x3_grammar {
     //auto const sub_def = x3::int_;
     //and use it instead of x3::int_ in the next definition
 
-    auto const for_def = 
+    auto const for__def = 
             x3::lit("for") 
         >>  -x3::int_ 
         >>  ';' 
@@ -49,8 +49,8 @@ namespace x3_grammar {
         >>  instruction;
 
     BOOST_SPIRIT_DEFINE(
-        for_ = for_def,
-        instruction = instruction_def
+        for_,
+        instruction
     );
 
     auto parser = for_;
