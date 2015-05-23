@@ -20,7 +20,6 @@ struct function_declaration {
 };
 
 struct import {
-    int fake_;
     std::string file;
 };
 
@@ -81,9 +80,9 @@ namespace x3_grammar {
          );
     
     BOOST_SPIRIT_DEFINE(
-        source_file = source_file_def,
-        function_declaration = function_declaration_def, 
-        import = import_def
+        source_file,
+        function_declaration, 
+        import
     );
 
     auto parser = source_file;

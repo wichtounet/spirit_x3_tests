@@ -63,14 +63,16 @@ namespace x3_grammar {
     auto const pointer_type_def = simple_type >> '*';
 
     BOOST_SPIRIT_DEFINE(
-        type = type_def,
-        simple_type = simple_type_def,
-        pointer_type = pointer_type_def
+        type,
+        simple_type,
+        pointer_type
     );
 
     auto const type_grammar = x3::skip(skipper)[type];
 
-    BOOST_SPIRIT_DEFINE(declaration = type_grammar >> x3::lexeme[*x3::alpha]);
+    auto const declaration_def = type_grammar >> x3::lexeme[*x3::alpha];
+
+    BOOST_SPIRIT_DEFINE(declaration);
 
     auto parser = declaration;
 

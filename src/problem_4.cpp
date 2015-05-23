@@ -42,9 +42,9 @@ namespace x3_grammar {
         x3_ast::simple_type
     >;
 
-    BOOST_SPIRIT_DEFINE(
-        simple_type = x3::attr(true)
-    );
+    auto const simple_type_def = x3::attr(true);
+
+    BOOST_SPIRIT_DEFINE(simple_type);
 
     auto simple_type_grammar = simple_type;
 
@@ -52,11 +52,9 @@ namespace x3_grammar {
         return x3::skip(skipper)[simple_type_grammar];
     }
 
-    auto const type_grammar = type_grammar_create();
+    auto const template_function_declaration_def = type_grammar_create();
 
-    BOOST_SPIRIT_DEFINE(
-        template_function_declaration = type_grammar
-    );
+    BOOST_SPIRIT_DEFINE(template_function_declaration);
 
     auto parser = template_function_declaration;
 

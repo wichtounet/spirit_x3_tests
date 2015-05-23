@@ -36,10 +36,14 @@ namespace x3_grammar {
 
     auto const value_def = x3::char_ | x3::float_;
 
+    auto const instruction_def = (return_ >> ';') | x3::alnum;
+
+    auto return__def = x3::lit("return") >>  value;
+
     BOOST_SPIRIT_DEFINE(
-        instruction = (return_ >> ';') | x3::alnum,
-        value = value_def,
-        return_ = x3::lit("return") >>  value
+        instruction,
+        value,
+        return_
     );
 
     auto parser = instruction;

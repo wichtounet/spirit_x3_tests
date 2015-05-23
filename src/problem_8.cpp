@@ -83,11 +83,11 @@ namespace x3_grammar {
     auto const value_def = additive_expression;
 
     BOOST_SPIRIT_DEFINE(
-        value = value_def,
-        additive_expression = additive_expression_def,
-        multiplicative_expression = multiplicative_expression_def,
-        cast_expression = cast_expression_def,
-        variable_value = variable_value_def
+        value,
+        additive_expression,
+        multiplicative_expression,
+        cast_expression,
+        variable_value
     );
 
 } // end of grammar namespace

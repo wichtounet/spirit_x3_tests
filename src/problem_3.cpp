@@ -40,8 +40,8 @@ namespace x3_grammar {
         ;
 
     BOOST_SPIRIT_DEFINE(
-        declaration = declaration_def, 
-        identifier = identifier_def
+        declaration, 
+        identifier
     );
 
     auto parser = declaration;

@@ -46,10 +46,7 @@ namespace x3_grammar {
     auto const expression_2_def = 
         expression >> x3::int_ >> expression;
 
-    BOOST_SPIRIT_DEFINE(
-        expression_2 = expression_2_def,
-        expression = expression_def
-    );
+    BOOST_SPIRIT_DEFINE(expression_2, expression);
 
     auto parser = expression_2;
 
